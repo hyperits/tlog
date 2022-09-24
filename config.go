@@ -38,9 +38,9 @@ type OutputConfig struct {
 
 // WriteConfig is the local file config.
 type WriteConfig struct {
-	// LogPath is the log path like /usr/local/trpc/log/.
+	// LogPath is the log path like /usr/local/tlog/log/.
 	LogPath string `yaml:"log_path"`
-	// Filename is the file name like trpc.log.
+	// Filename is the file name like tlog.log.
 	Filename string `yaml:"filename"`
 	// WriteMode is the log write mod. 1: sync, 2: async, 3: fast(maybe dropped).
 	WriteMode int `yaml:"write_mode"`

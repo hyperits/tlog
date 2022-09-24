@@ -53,12 +53,12 @@ var zapLevelToLevel = map[zapcore.Level]Level{
 	zapcore.FatalLevel: LevelFatal,
 }
 
-// NewZapLog creates a trpc default Logger from zap whose caller skip is set to 2.
+// NewZapLog creates a tlog default Logger from zap whose caller skip is set to 2.
 func NewZapLog(c Config) Logger {
 	return NewZapLogWithCallerSkip(c, 2)
 }
 
-// NewZapLogWithCallerSkip creates a trpc default Logger from zap.
+// NewZapLogWithCallerSkip creates a tlog default Logger from zap.
 func NewZapLogWithCallerSkip(c Config, callerSkip int) Logger {
 	var (
 		cores  []zapcore.Core

@@ -221,7 +221,7 @@ func (p *pluginInfo) key() string {
 	return p.typ + "-" + p.name
 }
 
-// onFinish notifies the plugin that all plugins' loading has been done by tRPC-Go.
+// onFinish notifies the plugin that all plugins' loading has been done by tlog-Go.
 func (p *pluginInfo) onFinish() error {
 	f, ok := p.factory.(FinishNotifier)
 	if !ok {
@@ -232,7 +232,7 @@ func (p *pluginInfo) onFinish() error {
 	return f.OnFinish(p.name)
 }
 
-// FinishNotifier is the interface used to notify that all plugins' loading has been done by tRPC-Go.
+// FinishNotifier is the interface used to notify that all plugins' loading has been done by tlog-Go.
 // Some plugins need to implement this interface to be notified when all other plugins' loading has been done.
 type FinishNotifier interface {
 	OnFinish(name string) error
@@ -243,7 +243,7 @@ type FinishNotifier interface {
 var done = make(chan struct{}) // channel that notifies initialization of plugins has been done
 
 // SetupFinished sends the notification that plugins' initialization has been done.
-// This function is used by tRPC-Go framework only.
+// This function is used by tlog-Go framework only.
 func SetupFinished() {
 	select {
 	case <-done: // already been closed

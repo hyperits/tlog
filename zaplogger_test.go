@@ -27,7 +27,7 @@ var defaultConfig = []log.OutputConfig{
 		Level:     "info",
 		Formatter: "json",
 		WriteConfig: log.WriteConfig{
-			Filename:   "trpc_size.log",
+			Filename:   "tlog_size.log",
 			RollType:   "size",
 			MaxAge:     7,
 			MaxBackups: 10,
@@ -42,7 +42,7 @@ var defaultConfig = []log.OutputConfig{
 		Level:     "info",
 		Formatter: "json",
 		WriteConfig: log.WriteConfig{
-			Filename:   "trpc_time.log",
+			Filename:   "tlog_time.log",
 			RollType:   "time",
 			MaxAge:     7,
 			MaxBackups: 10,

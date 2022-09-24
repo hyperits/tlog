@@ -1,9 +1,9 @@
-# tRPC-Go Plugin Management
+# tlog-Go Plugin Management
 
 ## How it works
-- tRPC-Go framework only defines a general plugin interface and provides a map for plugin registration. A plugin of any component can be registered by implementing a "bridge" which is as belows.
+- tlog-Go framework only defines a general plugin interface and provides a map for plugin registration. A plugin of any component can be registered by implementing a "bridge" which is as belows.
 
-## Two kinds of tRPC-Go plugins
+## Two kinds of tlog-Go plugins
 - One kind of plugins must be loaded from a config file i.e. selector, log, registry, discovery, loadbalance, circuitbreaker, config, filter, transport.
 - The other kind of plugins don't rely on any config file i.e. codec, serializer, compressor.
 
@@ -67,5 +67,5 @@
         }
     ```
     ```golang
-        codec.Register("trpc", trpc.DefaultServerCodec, trpc.DefaultClientCodec)
+        codec.Register("tlog", tlog.DefaultServerCodec, tlog.DefaultClientCodec)
     ```

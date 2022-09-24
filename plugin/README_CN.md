@@ -1,9 +1,9 @@
-# tRPC-Go 插件管理体系
+# tlog-Go 插件管理体系
 
 ## 插件实现原理
 - 框架只定义插件标准接口，并提供map注册方式，业务自己通过桥梁实现其他组件的接口并注册到框架中
 
-## tRPC-Go 插件主要有两种：
+## tlog-Go 插件主要有两种：
 - 需要通过配置文件才能实例化的插件，如名字服务，远程日志等，包括 selector log registry discovery loadbalance circuitbreaker config filter transport
 - 不需要配置文件的插件，如打解包协议，序列化方式等，包括 codec serializer compressor
 
@@ -12,10 +12,10 @@
     ```golang
         // Factory 插件工厂统一抽象 外部插件需要实现该接口，通过该工厂接口生成具体的插件并注册到具体的插件类型里面
         type Factory interface {
-        	// Type 插件的类型 如 registry selector log config tracing，对应到trpc_go.yaml配置文件plugins下的第一层名字
+        	// Type 插件的类型 如 registry selector log config tracing，对应到tlog_go.yaml配置文件plugins下的第一层名字
         	Type() string
         	// Setup 根据配置项节点装载插件
-        	// 用户自己先定义好具体插件的配置数据结构，通过decoder解析出来，开始实例化具体插件，对应到trpc_go.yaml配置文件plugins下的第二层名字
+        	// 用户自己先定义好具体插件的配置数据结构，通过decoder解析出来，开始实例化具体插件，对应到tlog_go.yaml配置文件plugins下的第二层名字
         	Setup(name string, configDec Decoder) error
         }
     ```
@@ -55,5 +55,5 @@
         }
     ```
     ```golang
-        codec.Register("trpc", trpc.DefaultServerCodec, trpc.DefaultClientCodec)
+        codec.Register("tlog", tlog.DefaultServerCodec, tlog.DefaultClientCodec)
     ```

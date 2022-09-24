@@ -1,4 +1,4 @@
-# tRPC-Go 日志功能及实现 
+# tlog-Go 日志功能及实现 
 
 ## 日志配置
 ```yaml
@@ -20,7 +20,7 @@ plugins:
           message_key: Message                    #日志消息体字段名称，不填默认"M"
           stacktrace_key: StackTrace              #日志堆栈字段名称， 不填默认"S"
         writer_config:                            #本地文件输出具体配置
-          filename: ../log/trpc_size.log          #本地文件滚动日志存放的路径
+          filename: ../log/tlog_size.log          #本地文件滚动日志存放的路径
           write_mode: 3                           #日志写入模式，1-同步，2-异步，3-极速(异步丢弃), 不配置默认极速模式
           roll_type: size                         #文件滚动类型,size为按大小滚动
           max_age: 7                              #最大日志保留天数
@@ -31,7 +31,7 @@ plugins:
         level: debug                              #本地文件滚动日志的级别
         formatter: json                           #标准输出日志的格式
         writer_config:                            #本地文件输出具体配置
-          filename: ../log/trpc_time.log          #本地文件滚动日志存放的路径
+          filename: ../log/tlog_time.log          #本地文件滚动日志存放的路径
           write_mode: 3                           #日志写入模式，1-同步，2-异步，3-极速(异步丢弃), 不配置默认极速模式
           roll_type: time                         #文件滚动类型,time为按时间滚动
           max_age: 7                              #最大日志保留天数
@@ -53,12 +53,12 @@ plugins:
         caller_skip: 1                            #用于定位日志的调用处
         level: debug                              #业务自定义core输出的级别
         writer_config:                            #本地文件输出具体配置
-          filename: ../log/trpc1.log              #本地文件滚动日志存放的路径
+          filename: ../log/tlog1.log              #本地文件滚动日志存放的路径
       - writer: file                              #本地文件日志
         caller_skip: 1                            #用于定位日志的调用处
         level: debug                              #本地文件滚动日志的级别
         writer_config:                            #本地文件输出具体配置
-          filename: ../log/trpc2.log              #本地文件滚动日志存放的路径
+          filename: ../log/tlog2.log              #本地文件滚动日志存放的路径
 ```
 
 ## 相关概念解析
@@ -66,7 +66,7 @@ plugins:
 - log factory: 日志插件工厂，每个日志都是一个插件，一个服务可以有多个日志插件，需要通过日志工厂读取配置信息实例化具体logger并注册到框架中，没有使用日志工厂，默认只输出到终端
 - writer factory: 日志输出插件工厂，每个输出流都是一个插件，一个日志可以有多个输出，需要通过输出工厂读取具体配置实例化具体core
 - core: zap的具体日志输出实例，有终端，本地日志，远程日志等等
-- zap: uber的一个log开源实现，trpc框架直接使用的zap的实现
+- zap: uber的一个log开源实现，tlog框架直接使用的zap的实现
 - with fields: 设置一些业务自定义数据到每条log里:比如uid，imei等，每个请求入口设置一次
 
 
@@ -88,7 +88,7 @@ plugins:
 	func main() {
 		plugin.Register("custom", log.DefaultLogFactory) 
 		
-		s := trpc.NewServer()
+		s := tlog.NewServer()
 	}
 ```
 2. 配置文件定义自己的logger，如上custom 
@@ -98,12 +98,12 @@ plugins:
 ```
 4. 由于一个context只能保存一个logger，所以DebugContext等接口只能打印default logger，需要使用XxxContext接口打印自定义logger时，可以在请求入口get logger后设置到ctx里面，如
 ```go
-    trpc.Message(ctx).WithLogger(log.Get("custom"))
+    tlog.Message(ctx).WithLogger(log.Get("custom"))
     log.DebugContext(ctx, "custom log msg")
 ```
 ## 框架日志
 1. 框架以尽量不打日志为原则，将错误一直往上抛交给用户自己处理
-2. 底层严重问题才会打印trace日志，需要设置环境变量才会开启：export TRPC_LOG_TRACE=1
+2. 底层严重问题才会打印trace日志，需要设置环境变量才会开启：export tlog_LOG_TRACE=1
 
 ## 关于 `caller_skip` 的说明
 
@@ -125,7 +125,7 @@ log.Debug("default logger") // 使用默认的 logger
         level: debug                      #本地文件滚动日志的级别
         formatter: json                   #标准输出日志的格式
         writer_config:                    #本地文件输出具体配置
-          filename: ../log/trpc_time.log  #本地文件滚动日志存放的路径
+          filename: ../log/tlog_time.log  #本地文件滚动日志存放的路径
           write_mode: 3                   #日志写入模式，1-同步，2-异步，3-极速(异步丢弃), 不配置默认极速模式
           roll_type: time                 #文件滚动类型,time为按时间滚动
           max_age: 7                      #最大日志保留天数
@@ -135,16 +135,16 @@ log.Debug("default logger") // 使用默认的 logger
           time_unit: day                  #滚动时间间隔，支持：minute/hour/day/month/year
 ```
 
-此时不需要关注或者去设置 `caller_skip` 的值，该值默认为 2，意思是在 `zap.Logger.Debug` 上套了两层（`trpc.log.Debug -> trpc.log.zapLog.Debug -> zap.Logger.Debug`）
+此时不需要关注或者去设置 `caller_skip` 的值，该值默认为 2，意思是在 `zap.Logger.Debug` 上套了两层（`tlog.log.Debug -> tlog.log.zapLog.Debug -> zap.Logger.Debug`）
 
 2. 将自定义的 logger 放到 context 中进行使用：
 
 ```go
-    trpc.Message(ctx).WithLogger(log.Get("custom"))
+    tlog.Message(ctx).WithLogger(log.Get("custom"))
     log.DebugContext(ctx, "custom log msg")
 ```
 
-此时也不需要关注或者去设置 `caller_skip` 的值，该值默认为 2，意思是在 `zap.Logger.Debug` 上套了两层（`trpc.log.DebugContext -> trpc.log.zapLog.Debug -> zap.Logger.Debug`）
+此时也不需要关注或者去设置 `caller_skip` 的值，该值默认为 2，意思是在 `zap.Logger.Debug` 上套了两层（`tlog.log.DebugContext -> tlog.log.zapLog.Debug -> zap.Logger.Debug`）
 
 配置例子如下：
 
@@ -153,7 +153,7 @@ log.Debug("default logger") // 使用默认的 logger
       - writer: file                  #业务自定义的core配置，名字随便定
         level: debug                  #业务自定义core输出的级别
         writer_config:                #本地文件输出具体配置
-          filename: ../log/trpc1.log  #本地文件滚动日志存放的路径
+          filename: ../log/tlog1.log  #本地文件滚动日志存放的路径
 ```
 
 
@@ -163,7 +163,7 @@ log.Debug("default logger") // 使用默认的 logger
 	log.Get("custom").Debug("message")
 ```
 
-此时需要将 `custom` logger 的 `caller_skip` 值设置为 1，因为 `log.Get("custom")` 直接返回的是 `trpc.log.zapLog`，调用 `trpc.log.zapLog.Debug` 只在 `zap.Logger.Debug` 上套了一层（`trpc.log.zapLog.Debug -> zap.Logger.Debug`）
+此时需要将 `custom` logger 的 `caller_skip` 值设置为 1，因为 `log.Get("custom")` 直接返回的是 `tlog.log.zapLog`，调用 `tlog.log.zapLog.Debug` 只在 `zap.Logger.Debug` 上套了一层（`tlog.log.zapLog.Debug -> zap.Logger.Debug`）
 
 配置例子如下：
 
@@ -173,7 +173,7 @@ log.Debug("default logger") // 使用默认的 logger
         caller_skip: 1                #用于定位日志的调用处
         level: debug                  #业务自定义core输出的级别
         writer_config:                #本地文件输出具体配置
-          filename: ../log/trpc1.log  #本地文件滚动日志存放的路径
+          filename: ../log/tlog1.log  #本地文件滚动日志存放的路径
 ```
 
 要注意 `caller_skip` 放置的位置（不要放在 `writer_config` 里面），并且对于多个 `writer` 都有 `caller_skip` 时，该 logger 的 `caller_skip` 的值以最后一个为准，比如：
@@ -184,12 +184,12 @@ log.Debug("default logger") // 使用默认的 logger
         caller_skip: 1                #用于定位日志的调用处
         level: debug                  #业务自定义core输出的级别
         writer_config:                #本地文件输出具体配置
-          filename: ../log/trpc1.log  #本地文件滚动日志存放的路径
+          filename: ../log/tlog1.log  #本地文件滚动日志存放的路径
       - writer: file                  #本地文件日志
         caller_skip: 2                #用于定位日志的调用处
         level: debug                  #本地文件滚动日志的级别
         writer_config:                #本地文件输出具体配置
-          filename: ../log/trpc2.log  #本地文件滚动日志存放的路径
+          filename: ../log/tlog2.log  #本地文件滚动日志存放的路径
 ``` 
 
 最终 `custom` 这个 logger 的 `caller_skip` 值会被设置为 2

@@ -59,7 +59,7 @@ type Field struct {
 	Value interface{}
 }
 
-// Logger is the underlying logging work for tRPC framework.
+// Logger is the underlying logging work for tlog framework.
 type Logger interface {
 	// Trace logs to TRACE log. Arguments are handled in the manner of fmt.Print.
 	Trace(args ...interface{})
